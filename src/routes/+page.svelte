@@ -2,6 +2,7 @@
     import { invoke } from "@tauri-apps/api/core";
     import { resolveResource } from "@tauri-apps/api/path";
     import { Command } from "@tauri-apps/plugin-shell";
+    import { Button } from "$lib/components/ui/button/index";
 
     let name = $state("");
     let greetMsg = $state("");
@@ -45,7 +46,7 @@
             placeholder="Enter a name..."
             bind:value={name}
         />
-        <button type="submit">Greet</button>
+        <Button type="submit">Greet</Button>
     </form>
     <p>{greetMsg}</p>
 </main>
