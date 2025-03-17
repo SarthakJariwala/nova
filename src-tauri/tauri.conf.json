@@ -10,6 +10,7 @@
     "frontendDist": "../build"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "nova",
@@ -32,6 +33,9 @@
       "icons/icon.ico"
     ],
     "externalBin": ["binaries/uv"],
-    "resources": ["../python_backend/hello.py"]
+    "resources": [
+      "../python_backend/paperqa_server.py",
+      "../python_backend/paperqa_api.py"
+    ]
   }
 }
