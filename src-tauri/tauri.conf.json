@@ -34,8 +34,8 @@
     ],
     "externalBin": ["binaries/uv"],
     "resources": [
-      "../python_backend/paperqa_server.py",
-      "../python_backend/paperqa_api.py"
+      "python_backend/paperqa_server.py",
+      "python_backend/paperqa_api.py"
     ]
   }
 }
