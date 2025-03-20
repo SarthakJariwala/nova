@@ -5,19 +5,8 @@
     let error = $state("");
     let isLoading = $state(true);
 
-    let pollInterval;
-
     $effect(() => {
-        // Initial check
         checkStatus();
-
-        // Set up polling to refresh status periodically
-        pollInterval = setInterval(checkStatus, 5000);
-
-        // Clean up interval when component is destroyed
-        return () => {
-            if (pollInterval) clearInterval(pollInterval);
-        };
     });
 
     async function checkStatus() {
