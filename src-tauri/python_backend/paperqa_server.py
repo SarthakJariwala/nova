@@ -186,7 +186,7 @@ class PaperQAService:
 
         return {
             "status": "initialized",
-            "paper_dir": self.paperqa.paper_dir.name,
+            "paper_dir": self.paperqa.paper_dir,
             "llm": self.paperqa.llm,
             "embedding": self.paperqa.embedding,
             "preset": self.paperqa.preset or "none",
@@ -292,9 +292,7 @@ class PaperQAServer:
         except Exception as e:
             logger.error(f"Error handling request: {str(e)}")
             # Send error response
-            socket.send_json(
-                {"status": "error", "message": f"Server error: {str(e)}"}
-            )
+            socket.send_json({"status": "error", "message": f"Server error: {str(e)}"})
 
     def run(self):
         """Run the server in a loop."""

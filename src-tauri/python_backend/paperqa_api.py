@@ -57,7 +57,7 @@ class PaperQA:
         if not paper_dir.is_dir():
             raise ValueError(f"Paper directory '{paper_dir}' does not exist")
 
-        self.paper_dir = paper_dir
+        self.paper_dir = str(paper_dir)
         self.llm = llm
         self.summary_llm = summary_llm
         self.agent_llm = agent_llm
@@ -79,7 +79,7 @@ class PaperQA:
         """Create the settings object."""
         # Build settings dictionary
         settings_dict = {
-            "paper_directory": Path(self.paper_dir),
+            "paper_directory": self.paper_dir,
             "temperature": self.temperature,
             "verbosity": self.verbosity,
             "llm": self.llm,
@@ -91,7 +91,7 @@ class PaperQA:
             "agent": AgentSettings(
                 agent_llm=self.agent_llm,
                 index=IndexSettings(
-                    paper_directory=Path(self.paper_dir), name=self.index_name
+                    paper_directory=self.paper_dir, name=self.index_name
                 ),
             ),
             "parsing": {"chunk_size": self.chunk_size},
@@ -165,9 +165,7 @@ class PaperQA:
                     "text_name": ctx.text.name
                     if hasattr(ctx, "text") and hasattr(ctx.text, "name")
                     else "",
-                    "score": float(ctx.score)
-                    if hasattr(ctx, "score")
-                    else None,
+                    "score": float(ctx.score) if hasattr(ctx, "score") else None,
                 }
                 for ctx in response.session.contexts
             ]
