@@ -1,6 +1,7 @@
 <script>
     import paperQAClient from "$lib/paperqa-client";
     import { Badge } from "$lib/components/ui/badge/index";
+    import * as Card from "$lib/components/ui/card/index";
 
     let status = $state(null);
     let error = $state("");
@@ -37,46 +38,69 @@
     }
 </script>
 
-<div class="border rounded p-4">
-    <h2 class="text-lg font-semibold mb-2">Status</h2>
-
-    {#if isLoading}
-        <Badge variant="secondary">Loading...</Badge>
-    {:else if error}
-        <Badge variant="destructive">{error}</Badge>
-    {:else if status}
-        <div class="space-y-2">
-            <Badge
-                variant={status.status === "initialized"
-                    ? "default"
-                    : "outline"}
-            >
-                {status.status === "initialized" ? "Ready" : "Not Initialized"}
-            </Badge>
-
-            {#if status.status === "initialized"}
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium">Paper Directory:</span>
-                    <span class="text-sm">{status.paper_dir}</span>
+<Card.Root>
+    <Card.Header
+        class="flex flex-row items-center justify-between space-y-0 pb-2"
+    >
+        <Card.Title>Status</Card.Title>
+        {#if isLoading}
+            <div class="flex items-center justify-center py-4">
+                <Badge variant="secondary">Loading...</Badge>
+            </div>
+        {:else if error}
+            <div class="py-2">
+                <Badge variant="destructive">{error}</Badge>
+            </div>
+        {:else if status}
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <Badge
+                        variant={status.status === "initialized"
+                            ? "default"
+                            : "outline"}
+                    >
+                        {status.status === "initialized"
+                            ? "Ready"
+                            : "Not Initialized"}
+                    </Badge>
                 </div>
+            </div>
+        {/if}
+    </Card.Header>
 
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium">LLM:</span>
-                    <span class="text-sm">{status.llm}</span>
-                </div>
+    <Card.Content>
+        <div class="space-y-3">
+            {#if status && status.status === "initialized"}
+                <div class="space-y-3 pt-2 pb-2">
+                    <div class="flex flex-col space-y-1">
+                        <p class="text-sm font-medium">Paper Directory</p>
+                        <p class="text-xs text-muted-foreground">
+                            {status.paper_dir}
+                        </p>
+                    </div>
 
-                <div class="flex justify-between border-b pb-2">
-                    <span class="font-medium">Embedding:</span>
-                    <span class="text-sm">{status.embedding}</span>
-                </div>
+                    <div class="flex flex-col space-y-1">
+                        <p class="text-sm font-medium">LLM</p>
+                        <p class="text-xs text-muted-foreground">
+                            {status.llm}
+                        </p>
+                    </div>
 
-                <div class="flex justify-between pb-2">
-                    <span class="font-medium">Preset:</span>
-                    <span class="text-sm">{status.preset}</span>
+                    <div class="flex flex-col space-y-1">
+                        <p class="text-sm font-medium">Embedding</p>
+                        <p class="text-xs text-muted-foreground">
+                            {status.embedding}
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col space-y-1">
+                        <p class="text-sm font-medium">Preset</p>
+                        <p class="text-xs text-muted-foreground">
+                            {status.preset}
+                        </p>
+                    </div>
                 </div>
             {/if}
         </div>
-    {:else}
-        <div class="py-2">No status information available</div>
-    {/if}
-</div>
+    </Card.Content>
+</Card.Root>
