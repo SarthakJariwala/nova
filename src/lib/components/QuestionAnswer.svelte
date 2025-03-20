@@ -1,5 +1,6 @@
 <script>
     import { Button } from "$lib/components/ui/button";
+    import { Textarea } from "$lib/components/ui/textarea";
     import paperQAClient from "$lib/paperqa-client";
 
     let question = $state("");
@@ -37,11 +38,10 @@
     <h2 class="text-lg font-semibold">Ask a Question</h2>
 
     <div class="space-y-4">
-        <textarea
-            class="w-full p-3 border rounded h-32"
+        <Textarea
             placeholder="Enter your question about the papers"
             bind:value={question}
-        ></textarea>
+        ></Textarea>
 
         <Button
             onclick={askQuestion}

@@ -1,6 +1,7 @@
 <script>
     import { open } from "@tauri-apps/plugin-dialog";
     import { Button } from "$lib/components/ui/button";
+    import { Input } from "$lib/components/ui/input";
     import paperQAClient from "$lib/paperqa-client";
 
     let paperDir = $state("");
@@ -55,7 +56,7 @@
     <h2 class="text-lg font-semibold">Paper Directory</h2>
 
     <div class="flex gap-2 items-center">
-        <input
+        <Input
             type="text"
             class="flex-1 p-2 border rounded"
             placeholder="Select papers directory"

@@ -1,5 +1,8 @@
 <script>
     import { Button } from "$lib/components/ui/button";
+    import { Checkbox } from "$lib/components/ui/checkbox";
+    import { Input } from "$lib/components/ui/input";
+    import { Label } from "$lib/components/ui/label";
     import paperQAClient from "$lib/paperqa-client";
 
     let settings = $state({
@@ -62,8 +65,8 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="space-y-2">
-            <label class="text-sm font-medium">LLM Model</label>
-            <input
+            <Label>LLM Model</Label>
+            <Input
                 type="text"
                 class="w-full p-2 border rounded"
                 bind:value={settings.llm}
@@ -71,8 +74,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Summary LLM</label>
-            <input
+            <Label>Summary LLM</Label>
+            <Input
                 type="text"
                 class="w-full p-2 border rounded"
                 bind:value={settings.summary_llm}
@@ -80,8 +83,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Agent LLM</label>
-            <input
+            <Label>Agent LLM</Label>
+            <Input
                 type="text"
                 class="w-full p-2 border rounded"
                 bind:value={settings.agent_llm}
@@ -89,8 +92,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Embedding Model</label>
-            <input
+            <Label>Embedding Model</Label>
+            <Input
                 type="text"
                 class="w-full p-2 border rounded"
                 bind:value={settings.embedding}
@@ -98,8 +101,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Temperature</label>
-            <input
+            <Label>Temperature</Label>
+            <Input
                 type="number"
                 min="0"
                 max="1"
@@ -110,8 +113,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Evidence K</label>
-            <input
+            <Label>Evidence K</Label>
+            <Input
                 type="number"
                 min="1"
                 class="w-full p-2 border rounded"
@@ -120,8 +123,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Max Sources</label>
-            <input
+            <Label>Max Sources</Label>
+            <Input
                 type="number"
                 min="1"
                 class="w-full p-2 border rounded"
@@ -130,8 +133,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Chunk Size</label>
-            <input
+            <Label>Chunk Size</Label>
+            <Input
                 type="number"
                 min="100"
                 class="w-full p-2 border rounded"
@@ -140,7 +143,7 @@
         </div>
 
         <div class="space-y-2">
-            <label class="text-sm font-medium">Preset</label>
+            <Label>Preset</Label>
             <select
                 class="w-full p-2 border rounded"
                 bind:value={settings.preset}
@@ -153,13 +156,8 @@
         </div>
 
         <div class="space-y-2">
-            <label class="flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    bind:checked={settings.use_tier1_limits}
-                />
-                <span class="text-sm font-medium">Use Tier 1 Rate Limits</span>
-            </label>
+            <Label>Use Tier 1 Rate Limits</Label>
+            <Checkbox bind:checked={settings.use_tier1_limits} />
         </div>
     </div>
 
