@@ -5,8 +5,19 @@
     let error = $state("");
     let isLoading = $state(true);
 
+    let pollInterval;
+
     $effect(() => {
+        // Initial check
         checkStatus();
+
+        // Set up polling to refresh status periodically
+        pollInterval = setInterval(checkStatus, 5000);
+
+        // Clean up interval when component is destroyed
+        return () => {
+            if (pollInterval) clearInterval(pollInterval);
+        };
     });
 
     async function checkStatus() {
@@ -22,6 +33,17 @@
         } finally {
             isLoading = false;
         }
+    }
+
+    // Expose a method to manually refresh the status
+    // This can be called from other components
+    function refreshStatus() {
+        return checkStatus();
+    }
+
+    // Make the refreshStatus function globally available so other components can call it
+    if (typeof window !== "undefined") {
+        window.refreshPaperQAStatus = refreshStatus;
     }
 </script>
 

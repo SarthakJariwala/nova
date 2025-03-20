@@ -8,6 +8,9 @@
     let isLoading = $state(false);
     let error = $state("");
 
+    /**
+     * @param {{ preventDefault: () => void; }} event
+     */
     async function selectDirectory(event) {
         event.preventDefault();
         try {
@@ -26,6 +29,9 @@
         }
     }
 
+    /**
+     * @param {{ preventDefault: () => void; }} event
+     */
     async function initializePaperQA(event) {
         event.preventDefault();
         if (!paperDir) {
@@ -40,6 +46,13 @@
             const result = await paperQAClient.initialize(paperDir);
             if (result.status === "success") {
                 console.log("PaperQA initialized successfully");
+                // Refresh status after initialization
+                if (
+                    typeof window !== "undefined" &&
+                    window.refreshPaperQAStatus
+                ) {
+                    window.refreshPaperQAStatus();
+                }
             } else {
                 error = result.message || "Failed to initialize PaperQA";
             }

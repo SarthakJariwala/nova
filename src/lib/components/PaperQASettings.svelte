@@ -19,6 +19,9 @@
         preset: "",
     });
 
+    /**
+     * @type {any[]}
+     */
     let presets = $state([]);
     let isLoading = $state(false);
     let error = $state("");
@@ -39,6 +42,9 @@
         }
     }
 
+    /**
+     * @param {{ preventDefault: () => void; }} event
+     */
     async function updateSettings(event) {
         event.preventDefault();
         error = "";
@@ -49,6 +55,13 @@
             const result = await paperQAClient.updateSettings(settings);
             if (result.status === "success") {
                 success = "Settings updated successfully";
+                // Refresh status after updating settings
+                if (
+                    typeof window !== "undefined" &&
+                    window.refreshPaperQAStatus
+                ) {
+                    window.refreshPaperQAStatus();
+                }
             } else {
                 error = result.message || "Failed to update settings";
             }
