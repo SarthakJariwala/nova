@@ -3,6 +3,7 @@
     import { Checkbox } from "$lib/components/ui/checkbox";
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
+    import * as Select from "$lib/components/ui/select/index.js";
     import paperQAClient from "$lib/paperqa-client";
 
     let settings = $state({
@@ -66,38 +67,22 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="space-y-2">
             <Label>LLM Model</Label>
-            <Input
-                type="text"
-                class="w-full p-2 border rounded"
-                bind:value={settings.llm}
-            />
+            <Input type="text" bind:value={settings.llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Summary LLM</Label>
-            <Input
-                type="text"
-                class="w-full p-2 border rounded"
-                bind:value={settings.summary_llm}
-            />
+            <Input type="text" bind:value={settings.summary_llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Agent LLM</Label>
-            <Input
-                type="text"
-                class="w-full p-2 border rounded"
-                bind:value={settings.agent_llm}
-            />
+            <Input type="text" bind:value={settings.agent_llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Embedding Model</Label>
-            <Input
-                type="text"
-                class="w-full p-2 border rounded"
-                bind:value={settings.embedding}
-            />
+            <Input type="text" bind:value={settings.embedding} />
         </div>
 
         <div class="space-y-2">
@@ -107,57 +92,47 @@
                 min="0"
                 max="1"
                 step="0.1"
-                class="w-full p-2 border rounded"
                 bind:value={settings.temperature}
             />
         </div>
 
         <div class="space-y-2">
             <Label>Evidence K</Label>
-            <Input
-                type="number"
-                min="1"
-                class="w-full p-2 border rounded"
-                bind:value={settings.evidence_k}
-            />
+            <Input type="number" min="1" bind:value={settings.evidence_k} />
         </div>
 
         <div class="space-y-2">
             <Label>Max Sources</Label>
-            <Input
-                type="number"
-                min="1"
-                class="w-full p-2 border rounded"
-                bind:value={settings.max_sources}
-            />
+            <Input type="number" min="1" bind:value={settings.max_sources} />
         </div>
 
         <div class="space-y-2">
             <Label>Chunk Size</Label>
-            <Input
-                type="number"
-                min="100"
-                class="w-full p-2 border rounded"
-                bind:value={settings.chunk_size}
-            />
+            <Input type="number" min="100" bind:value={settings.chunk_size} />
         </div>
 
         <div class="space-y-2">
             <Label>Preset</Label>
-            <select
-                class="w-full p-2 border rounded"
-                bind:value={settings.preset}
-            >
-                <option value="">None</option>
-                {#each presets as preset}
-                    <option value={preset}>{preset}</option>
-                {/each}
-            </select>
+            <Select.Root type="single" bind:value={settings.preset}>
+                <Select.Trigger class="w-full">
+                    {settings.preset || "Select a preset"}
+                </Select.Trigger>
+                <Select.Content>
+                    <Select.Item value="">None</Select.Item>
+                    {#each presets as preset}
+                        <Select.Item value={preset} label={preset}
+                            >{preset}</Select.Item
+                        >
+                    {/each}
+                </Select.Content>
+            </Select.Root>
         </div>
 
         <div class="space-y-2">
             <Label>Use Tier 1 Rate Limits</Label>
-            <Checkbox bind:checked={settings.use_tier1_limits} />
+            <div>
+                <Checkbox bind:checked={settings.use_tier1_limits} />
+            </div>
         </div>
     </div>
 

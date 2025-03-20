@@ -58,7 +58,6 @@
     <div class="flex gap-2 items-center">
         <Input
             type="text"
-            class="flex-1 p-2 border rounded"
             placeholder="Select papers directory"
             value={paperDir}
             readonly
