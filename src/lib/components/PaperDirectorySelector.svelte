@@ -3,10 +3,19 @@
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
     import paperQAClient from "$lib/paperqa-client";
+    import { loadSettings, saveSettings } from "@/store";
 
     let paperDir = $state("");
     let isLoading = $state(false);
     let error = $state("");
+
+    $effect(() => {
+        loadSettings().then((settings) => {
+            if (settings.paper_dir) {
+                paperDir = settings.paper_dir;
+            }
+        });
+    });
 
     /**
      * @param {{ preventDefault: () => void; }} event
@@ -22,6 +31,7 @@
 
             if (selected && typeof selected === "string") {
                 paperDir = selected;
+                saveSettings({ paper_dir: selected });
             }
         } catch (err) {
             console.error("Error selecting directory:", err);

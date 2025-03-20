@@ -1,12 +1,13 @@
 <script>
-    import { Button } from "$lib/components/ui/button";
-    import { Checkbox } from "$lib/components/ui/checkbox";
-    import { Input } from "$lib/components/ui/input";
-    import { Label } from "$lib/components/ui/label";
-    import * as Select from "$lib/components/ui/select/index.js";
-    import paperQAClient from "$lib/paperqa-client";
+    import { Button } from "@/components/ui/button";
+    import { Checkbox } from "@/components/ui/checkbox";
+    import { Input } from "@/components/ui/input";
+    import { Label } from "@/components/ui/label";
+    import * as Select from "@/components/ui/select/index.js";
+    import paperQAClient from "@/paperqa-client";
+    import { loadSettings, saveSettings } from "@/store";
 
-    let settings = $state({
+    const defaultSettings = {
         llm: "gpt-4o-2024-11-20",
         summary_llm: "gpt-4o-2024-11-20",
         agent_llm: "gpt-4o-2024-11-20",
@@ -16,8 +17,10 @@
         max_sources: 5,
         chunk_size: 5000,
         use_tier1_limits: true,
-        preset: "",
-    });
+        preset: "high_quality",
+    };
+
+    let settings = $state({ ...defaultSettings });
 
     /**
      * @type {any[]}
@@ -28,6 +31,11 @@
     let success = $state("");
 
     $effect(() => {
+        loadSettings().then((loadedSettings) => {
+            if (loadedSettings) {
+                settings = { ...defaultSettings, ...loadedSettings };
+            }
+        });
         loadPresets();
     });
 
@@ -54,6 +62,8 @@
         try {
             const result = await paperQAClient.updateSettings(settings);
             if (result.status === "success") {
+                // Update settings in store
+                await saveSettings(settings);
                 success = "Settings updated successfully";
                 // Refresh status after updating settings
                 if (

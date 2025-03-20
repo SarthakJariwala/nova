@@ -16,8 +16,7 @@
         error = "";
 
         try {
-            const result = await paperQAClient.getStatus();
-            status = result;
+            status = await paperQAClient.getStatus();
         } catch (err) {
             console.error("Error checking status:", err);
             error = `Error checking status: ${err.message}`;
@@ -28,8 +27,8 @@
 
     // Expose a method to manually refresh the status
     // This can be called from other components
-    function refreshStatus() {
-        return checkStatus();
+    async function refreshStatus() {
+        await checkStatus();
     }
 
     // Make the refreshStatus function globally available so other components can call it
