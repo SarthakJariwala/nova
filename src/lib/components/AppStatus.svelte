@@ -1,5 +1,6 @@
 <script>
     import paperQAClient from "$lib/paperqa-client";
+    import { Badge } from "$lib/components/ui/badge/index";
 
     let status = $state(null);
     let error = $state("");
@@ -37,31 +38,21 @@
 </script>
 
 <div class="border rounded p-4">
-    <h2 class="text-lg font-semibold mb-4">System Status</h2>
+    <h2 class="text-lg font-semibold mb-2">Status</h2>
 
     {#if isLoading}
-        <div class="py-2">Loading status...</div>
+        <Badge variant="secondary">Loading...</Badge>
     {:else if error}
-        <div
-            class="p-3 bg-destructive/20 text-destructive border border-destructive rounded"
-        >
-            {error}
-        </div>
+        <Badge variant="destructive">{error}</Badge>
     {:else if status}
         <div class="space-y-2">
-            <div class="flex justify-between border-b pb-2">
-                <span class="font-medium">Status:</span>
-                <span
-                    class="px-2 py-0.5 rounded text-xs {status.status ===
-                    'initialized'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'}"
-                >
-                    {status.status === "initialized"
-                        ? "Ready"
-                        : "Not Initialized"}
-                </span>
-            </div>
+            <Badge
+                variant={status.status === "initialized"
+                    ? "default"
+                    : "outline"}
+            >
+                {status.status === "initialized" ? "Ready" : "Not Initialized"}
+            </Badge>
 
             {#if status.status === "initialized"}
                 <div class="flex justify-between border-b pb-2">
