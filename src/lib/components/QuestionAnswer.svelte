@@ -58,8 +58,6 @@
 </script>
 
 <div class="space-y-6">
-    <h2 class="text-lg font-semibold">Ask a Question</h2>
-
     <div class="space-y-4">
         <Textarea
             placeholder="Enter your question about the papers"
