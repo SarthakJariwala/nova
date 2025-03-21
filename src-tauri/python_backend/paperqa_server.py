@@ -178,18 +178,25 @@ class PaperQAService:
         Returns:
             Dict with status information
         """
+        api_key_configured = False
+
         if not self.is_initialized:
+            # Check if API key is in environment even if not initialized
+            api_key_configured = bool(os.environ.get("OPENAI_API_KEY"))
             return {
                 "status": "not_initialized",
                 "message": "PaperQA not initialized. Call initialize() first.",
+                "api_key_configured": api_key_configured,
             }
 
+        api_key_configured = self.paperqa.is_api_key_configured()
         return {
             "status": "initialized",
             "paper_dir": self.paperqa.paper_dir,
             "llm": self.paperqa.llm,
             "embedding": self.paperqa.embedding,
             "preset": self.paperqa.preset or "none",
+            "api_key_configured": api_key_configured,
         }
 
 

@@ -4,6 +4,7 @@ PaperQA API - A class-based wrapper for the PaperQA library.
 This module provides a simple class to interact with PaperQA in your projects.
 """
 
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -32,6 +33,7 @@ class PaperQA:
         rate_limit: Optional[str] = None,
         preset: Optional[str] = None,
         index_name: Optional[str] = None,
+        api_key: Optional[str] = None,
     ):
         """
         Initialize the PaperQA wrapper.
@@ -51,6 +53,7 @@ class PaperQA:
             rate_limit: Custom rate limit string (e.g. '30000 per 1 minute')
             preset: Use a preset configuration
             index_name: Custom name for the index
+            api_key: API key for the LLM provider
         """
         # Check if paper directory exists
         paper_dir = Path(paper_dir).expanduser()
@@ -71,6 +74,10 @@ class PaperQA:
         self.rate_limit = rate_limit
         self.preset = preset
         self.index_name = index_name
+        self.api_key = api_key
+
+        if self.api_key:
+            os.environ["OPENAI_API_KEY"] = self.api_key
 
         # Create settings
         self._create_settings()
@@ -150,6 +157,12 @@ class PaperQA:
         Returns:
             Dict containing the response with answer, formatted_answer, references, etc.
         """
+        # Check if API key is set
+        if not self.is_api_key_configured():
+            return {
+                "status": "error",
+                "message": "API key not configured. Please set it in Settings.",
+            }
         # Run PaperQA
         response = ask(question, settings=self.settings)
 
@@ -183,8 +196,21 @@ class PaperQA:
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        # Update API key in environment if it was changed
+        if "api_key" in kwargs and kwargs["api_key"]:
+            os.environ["OPENAI_API_KEY"] = kwargs["api_key"]
+
         # Recreate settings with new values
         self._create_settings()
+
+    def is_api_key_configured(self) -> bool:
+        """
+        Check if the API key is configured.
+
+        Returns:
+            True if API key is configured, False otherwise.
+        """
+        return bool(self.api_key or os.environ.get("OPENAI_API_KEY"))
 
     @staticmethod
     def get_preset_names() -> List[str]:
