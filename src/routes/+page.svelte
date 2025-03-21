@@ -4,11 +4,68 @@
     import PaperQASettings from "$lib/components/PaperQASettings.svelte";
     import QuestionAnswer from "$lib/components/QuestionAnswer.svelte";
     import AppStatus from "$lib/components/AppStatus.svelte";
+    import { resolveResource } from "@tauri-apps/api/path";
+    import { Command } from "@tauri-apps/plugin-shell";
+    import paperQAClient from "$lib/paperqa-client";
 
     let activeTab = $state("papers");
+
+    let pythonCommand = null;
+    let pythonChildProcess = null;
+    let errorMessage = $state("");
+
+    $effect(() => {
+        launchPythonSidecar();
+
+        return () => {
+            if (pythonChildProcess) {
+                console.log("Killing Python server process");
+                pythonChildProcess.kill();
+            }
+
+            paperQAClient.close().catch((err) => {
+                console.error("Error closing ZMQ connection:", err);
+            });
+        };
+    });
+
+    async function launchPythonSidecar() {
+        try {
+            const pythonFilePath = await resolveResource(
+                "python_backend/paperqa_server.py",
+            );
+            console.log("Python file path:", pythonFilePath);
+
+            // Create the command
+            pythonCommand = Command.sidecar("binaries/uv", [
+                "run",
+                pythonFilePath,
+            ]);
+
+            // Start the process
+            pythonChildProcess = await pythonCommand.execute();
+            console.log("Python server started");
+
+            // Wait a moment for the server to start up
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            // Connect to the server
+            await paperQAClient.connect();
+        } catch (error) {
+            console.error("Error launching Python sidecar:", error);
+            errorMessage = `Error: ${error.message}`;
+        }
+    }
 </script>
 
 <Layout>
+    {#if errorMessage}
+        <div
+            class="p-4 bg-destructive/20 text-destructive border border-destructive rounded m-4"
+        >
+            {errorMessage}
+        </div>
+    {/if}
     <svelte:fragment slot="sidebar">
         <div class="space-y-1">
             <button
