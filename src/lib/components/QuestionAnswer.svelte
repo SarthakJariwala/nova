@@ -1,6 +1,7 @@
 <script>
     import { Button } from "$lib/components/ui/button";
     import { Textarea } from "$lib/components/ui/textarea";
+    import * as Card from "$lib/components/ui/card/index";
     import paperQAClient from "$lib/paperqa-client";
 
     let question = $state("");
@@ -84,51 +85,55 @@
     {/if}
 
     {#if answer}
-        <div class="border rounded p-4 space-y-4">
-            <div>
-                <h3 class="text-md font-semibold">Answer:</h3>
-                <div class="prose prose-sm mt-2 whitespace-pre-line">
-                    {answer.answer || answer.formatted_answer}
+        <Card.Root>
+            <Card.Content>
+                <div>
+                    <h3 class="text-md font-semibold">Answer:</h3>
+                    <div class="prose prose-sm mt-2 whitespace-pre-line">
+                        {answer.answer || answer.formatted_answer}
+                    </div>
                 </div>
-            </div>
 
-            {#if answer.references}
-                <details class="mt-4">
-                    <summary class="cursor-pointer text-md font-semibold"
-                        >References</summary
-                    >
-                    <div class="mt-2 space-y-3">
-                        <ol class="mt-2 space-y-2 text-sm">
-                            {#each parseReferences(answer.references) as reference}
-                                <li class="p-2 bg-muted rounded pl-1">
-                                    {reference}
-                                </li>
-                            {/each}
-                        </ol>
-                    </div>
-                </details>
-            {/if}
+                {#if answer.references}
+                    <details class="mt-4">
+                        <summary class="cursor-pointer text-md font-semibold"
+                            >References</summary
+                        >
+                        <div class="mt-2 space-y-3">
+                            <ol class="mt-2 space-y-2 text-sm">
+                                {#each parseReferences(answer.references) as reference}
+                                    <li class="p-2 bg-muted rounded pl-1">
+                                        {reference}
+                                    </li>
+                                {/each}
+                            </ol>
+                        </div>
+                    </details>
+                {/if}
 
-            {#if answer.contexts?.length}
-                <details class="mt-4">
-                    <summary class="cursor-pointer text-md font-semibold"
-                        >Context Details</summary
-                    >
-                    <div class="mt-2 space-y-3">
-                        {#each answer.contexts as ctx}
-                            <div class="p-3 bg-muted/50 rounded text-sm">
-                                <div class="font-medium">{ctx.text_name}</div>
-                                <div class="mt-1">{ctx.context}</div>
-                                {#if ctx.score !== null}
-                                    <div class="mt-1 text-xs">
-                                        Score: {ctx.score.toFixed(4)}
+                {#if answer.contexts?.length}
+                    <details class="mt-4">
+                        <summary class="cursor-pointer text-md font-semibold"
+                            >Context Details</summary
+                        >
+                        <div class="mt-2 space-y-3">
+                            {#each answer.contexts as ctx}
+                                <div class="p-3 bg-muted/50 rounded text-sm">
+                                    <div class="font-medium">
+                                        {ctx.text_name}
                                     </div>
-                                {/if}
-                            </div>
-                        {/each}
-                    </div>
-                </details>
-            {/if}
-        </div>
+                                    <div class="mt-1">{ctx.context}</div>
+                                    {#if ctx.score !== null}
+                                        <div class="mt-1 text-xs">
+                                            Score: {ctx.score.toFixed(4)}
+                                        </div>
+                                    {/if}
+                                </div>
+                            {/each}
+                        </div>
+                    </details>
+                {/if}
+            </Card.Content>
+        </Card.Root>
     {/if}
 </div>
