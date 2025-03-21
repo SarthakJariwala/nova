@@ -88,7 +88,6 @@
         <Card.Root>
             <Card.Content>
                 <div>
-                    <h3 class="text-md font-semibold">Answer:</h3>
                     <div class="prose prose-sm mt-2 whitespace-pre-line">
                         {answer.answer || answer.formatted_answer}
                     </div>
