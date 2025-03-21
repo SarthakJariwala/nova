@@ -12,6 +12,7 @@ const defaultSettings = {
   use_tier1_limits: true,
   preset: "high_quality",
   paper_dir: "",
+  api_key: "",
 };
 
 let store;

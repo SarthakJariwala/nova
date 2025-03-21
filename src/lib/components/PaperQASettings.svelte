@@ -18,6 +18,7 @@
         chunk_size: 5000,
         use_tier1_limits: true,
         preset: "high_quality",
+        api_key: "",
     };
 
     let settings = $state({ ...defaultSettings });
@@ -29,6 +30,7 @@
     let isLoading = $state(false);
     let error = $state("");
     let success = $state("");
+    let showApiKey = $state(false);
 
     $effect(() => {
         loadSettings().then((loadedSettings) => {
@@ -82,12 +84,38 @@
             isLoading = false;
         }
     }
+
+    function toggleApiKeyVisibility(event) {
+        event.preventDefault();
+        showApiKey = !showApiKey;
+    }
 </script>
 
 <div class="space-y-6">
     <h2 class="text-lg font-semibold">PaperQA Settings</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="space-y-2 md:col-span-2">
+            <Label>API Key</Label>
+            <div class="flex gap-2">
+                <Input
+                    type={showApiKey ? "text" : "password"}
+                    bind:value={settings.api_key}
+                    placeholder="sk-..."
+                />
+                <Button
+                    variant="outline"
+                    type="button"
+                    onclick={toggleApiKeyVisibility}
+                >
+                    {showApiKey ? "Hide" : "Show"}
+                </Button>
+            </div>
+            <p class="text-xs text-muted-foreground">
+                Your API key is only stored locally and sent only to LLM
+                providers.
+            </p>
+        </div>
         <div class="space-y-2">
             <Label>LLM Model</Label>
             <Input type="text" bind:value={settings.llm} />

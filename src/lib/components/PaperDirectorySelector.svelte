@@ -8,14 +8,29 @@
     let paperDir = $state("");
     let isLoading = $state(false);
     let error = $state("");
+    let apiKeyConfigured = $state(false);
 
     $effect(() => {
         loadSettings().then((settings) => {
             if (settings.paper_dir) {
                 paperDir = settings.paper_dir;
             }
+            // Check if API key is configured
+            apiKeyConfigured = Boolean(settings.openai_api_key);
         });
+
+        // Also check API key status when the component loads
+        checkApiKeyStatus();
     });
+
+    async function checkApiKeyStatus() {
+        try {
+            const status = await paperQAClient.getStatus();
+            apiKeyConfigured = status.api_key_configured;
+        } catch (err) {
+            console.error("Error checking API key status:", err);
+        }
+    }
 
     /**
      * @param {{ preventDefault: () => void; }} event
@@ -46,6 +61,11 @@
         event.preventDefault();
         if (!paperDir) {
             error = "Please select a papers directory first";
+            return;
+        }
+
+        if (!apiKeyConfigured) {
+            error = "Please configure your API key in Settings first";
             return;
         }
 
@@ -91,11 +111,18 @@
     {#if paperDir}
         <Button
             onclick={initializePaperQA}
-            disabled={isLoading}
+            disabled={isLoading || !apiKeyConfigured}
             variant="default"
         >
             {isLoading ? "Initializing..." : "Initialize PaperQA"}
         </Button>
+
+        {#if !apiKeyConfigured}
+            <div class="text-sm text-destructive">
+                API key not configured. Please go to Settings to add your API
+                key.
+            </div>
+        {/if}
     {/if}
 
     {#if error}

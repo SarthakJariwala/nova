@@ -69,36 +69,44 @@
 
     <Card.Content>
         <div class="space-y-3">
-            {#if status && status.status === "initialized"}
-                <div class="space-y-3 pt-2 pb-2">
-                    <div class="flex flex-col space-y-1">
-                        <p class="text-sm font-medium">Paper Directory</p>
-                        <p class="text-xs text-muted-foreground">
-                            {status.paper_dir}
+            {#if status}
+                {#if !status.api_key_configured}
+                    <div class="py-2">
+                        <Badge variant="destructive">API Key Missing</Badge>
+                        <p class="text-xs text-muted-foreground mt-1">
+                            Configure your API key in Settings
                         </p>
                     </div>
+                {:else}
+                    <div class="py-2">
+                        <Badge variant="secondary">API Key Configured</Badge>
+                    </div>
+                {/if}
 
-                    <div class="flex flex-col space-y-1">
-                        <p class="text-sm font-medium">LLM</p>
-                        <p class="text-xs text-muted-foreground">
-                            {status.llm}
-                        </p>
-                    </div>
+                {#if status.status === "initialized"}
+                    <div class="space-y-3 pt-2 pb-2">
+                        <div class="flex flex-col space-y-1">
+                            <p class="text-sm font-medium">Paper Directory</p>
+                            <p class="text-xs text-muted-foreground">
+                                {status.paper_dir}
+                            </p>
+                        </div>
 
-                    <div class="flex flex-col space-y-1">
-                        <p class="text-sm font-medium">Embedding</p>
-                        <p class="text-xs text-muted-foreground">
-                            {status.embedding}
-                        </p>
-                    </div>
+                        <div class="flex flex-col space-y-1">
+                            <p class="text-sm font-medium">LLM</p>
+                            <p class="text-xs text-muted-foreground">
+                                {status.llm}
+                            </p>
+                        </div>
 
-                    <div class="flex flex-col space-y-1">
-                        <p class="text-sm font-medium">Preset</p>
-                        <p class="text-xs text-muted-foreground">
-                            {status.preset}
-                        </p>
+                        <div class="flex flex-col space-y-1">
+                            <p class="text-sm font-medium">Preset</p>
+                            <p class="text-xs text-muted-foreground">
+                                {status.preset}
+                            </p>
+                        </div>
                     </div>
-                </div>
+                {/if}
             {/if}
         </div>
     </Card.Content>
