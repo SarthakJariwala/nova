@@ -57,7 +57,7 @@
     /**
      * @param {{ preventDefault: () => void; }} event
      */
-    async function initializePaperQA(event) {
+    async function initializeNova(event) {
         event.preventDefault();
         if (!paperDir) {
             error = "Please select a papers directory first";
@@ -75,7 +75,7 @@
         try {
             const result = await paperQAClient.initialize(paperDir);
             if (result.status === "success") {
-                console.log("PaperQA initialized successfully");
+                console.log("Nova initialized successfully");
                 // Refresh status after initialization
                 if (
                     typeof window !== "undefined" &&
@@ -84,11 +84,11 @@
                     window.refreshPaperQAStatus();
                 }
             } else {
-                error = result.message || "Failed to initialize PaperQA";
+                error = result.message || "Failed to initialize Nova";
             }
         } catch (err) {
-            console.error("Error initializing PaperQA:", err);
-            error = `Error initializing PaperQA: ${err.message}`;
+            console.error("Error initializing Nova:", err);
+            error = `Error initializing Nova: ${err.message}`;
         } finally {
             isLoading = false;
         }
@@ -96,8 +96,6 @@
 </script>
 
 <div class="space-y-4">
-    <h2 class="text-lg font-semibold">Paper Directory</h2>
-
     <div class="flex gap-2 items-center">
         <Input
             type="text"
@@ -110,11 +108,11 @@
 
     {#if paperDir}
         <Button
-            onclick={initializePaperQA}
+            onclick={initializeNova}
             disabled={isLoading || !apiKeyConfigured}
             variant="default"
         >
-            {isLoading ? "Initializing..." : "Initialize PaperQA"}
+            {isLoading ? "Initializing..." : "Initialize Nova"}
         </Button>
 
         {#if !apiKeyConfigured}
