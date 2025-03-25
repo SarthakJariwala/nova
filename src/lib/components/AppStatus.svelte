@@ -38,36 +38,33 @@
 </script>
 
 <Card.Root>
-    <Card.Header
-        class="flex flex-row items-center justify-between space-y-0 pb-2"
-    >
-        <Card.Title>Status</Card.Title>
-        {#if isLoading}
-            <div class="flex items-center justify-center py-4">
-                <Badge variant="secondary">Loading...</Badge>
-            </div>
-        {:else if error}
-            <div class="py-2">
-                <Badge variant="destructive">{error}</Badge>
-            </div>
-        {:else if status}
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <Badge
-                        variant={status.status === "initialized"
-                            ? "default"
-                            : "outline"}
-                    >
-                        {status.status === "initialized"
-                            ? "Ready"
-                            : "Not Initialized"}
-                    </Badge>
-                </div>
-            </div>
-        {/if}
-    </Card.Header>
-
     <Card.Content>
+        <div class="flex flex-row items-center justify-between space-y-0 pb-2">
+            <Card.Title>Status</Card.Title>
+            {#if isLoading}
+                <div class="flex items-center justify-center py-4">
+                    <Badge variant="secondary">Loading...</Badge>
+                </div>
+            {:else if error}
+                <div class="py-2">
+                    <Badge variant="destructive">{error}</Badge>
+                </div>
+            {:else if status}
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <Badge
+                            variant={status.status === "initialized"
+                                ? "default"
+                                : "outline"}
+                        >
+                            {status.status === "initialized"
+                                ? "Ready"
+                                : "Not Initialized"}
+                        </Badge>
+                    </div>
+                </div>
+            {/if}
+        </div>
         <div class="space-y-3">
             {#if status}
                 {#if !status.api_key_configured}
