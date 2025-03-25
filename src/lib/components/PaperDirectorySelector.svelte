@@ -4,29 +4,33 @@
     import { Input } from "$lib/components/ui/input";
     import paperQAClient from "$lib/paperqa-client";
     import { loadSettings, saveSettings } from "@/store";
+    import { onMount } from "svelte";
 
     let paperDir = $state("");
     let isLoading = $state(false);
     let error = $state("");
     let apiKeyConfigured = $state(false);
+    let settings = $state({});
 
-    $effect(() => {
-        loadSettings().then((settings) => {
-            if (settings.paper_dir) {
-                paperDir = settings.paper_dir;
-            }
-            // Check if API key is configured
-            apiKeyConfigured = Boolean(settings.openai_api_key);
-        });
+    onMount(async () => {
+        settings = await loadSettings();
+        // if there is a paper directory configured,
+        // we want to initialize Nova right away
+        if (settings.paper_dir) {
+            paperDir = settings.paper_dir;
+            await initializeNova();
+        }
 
-        // Also check API key status when the component loads
-        checkApiKeyStatus();
+        if (settings.api_key) {
+            await paperQAClient.updateSettings({ ...settings });
+            await checkApiKeyStatus();
+        }
     });
 
     async function checkApiKeyStatus() {
         try {
             const status = await paperQAClient.getStatus();
-            apiKeyConfigured = status.api_key_configured;
+            apiKeyConfigured = Boolean(status.api_key_configured);
         } catch (err) {
             console.error("Error checking API key status:", err);
         }
@@ -41,7 +45,7 @@
             const selected = await open({
                 directory: true,
                 multiple: false,
-                title: "Select Papers Directory",
+                title: "Select a folder with your papers",
             });
 
             if (selected && typeof selected === "string") {
@@ -54,18 +58,9 @@
         }
     }
 
-    /**
-     * @param {{ preventDefault: () => void; }} event
-     */
-    async function initializeNova(event) {
-        event.preventDefault();
+    async function initializeNova() {
         if (!paperDir) {
             error = "Please select a papers directory first";
-            return;
-        }
-
-        if (!apiKeyConfigured) {
-            error = "Please configure your API key in Settings first";
             return;
         }
 
@@ -73,7 +68,18 @@
         isLoading = true;
 
         try {
-            const result = await paperQAClient.initialize(paperDir);
+            const result = await paperQAClient.initialize(paperDir, {
+                preset: settings.preset,
+                llm: settings.llm,
+                summary_llm: settings.summary_llm,
+                agent_llm: settings.agent_llm,
+                embedding: settings.embedding,
+                temperature: settings.temperature,
+                evidence_k: settings.evidence_k,
+                max_sources: settings.max_sources,
+                chunk_size: settings.chunk_size,
+                use_tier1_limits: settings.use_tier1_limits,
+            });
             if (result.status === "success") {
                 console.log("Nova initialized successfully");
                 // Refresh status after initialization
@@ -107,11 +113,7 @@
     </div>
 
     {#if paperDir}
-        <Button
-            onclick={initializeNova}
-            disabled={isLoading || !apiKeyConfigured}
-            variant="default"
-        >
+        <Button onclick={initializeNova} disabled={isLoading} variant="default">
             {isLoading ? "Initializing..." : "Initialize Nova"}
         </Button>
 
