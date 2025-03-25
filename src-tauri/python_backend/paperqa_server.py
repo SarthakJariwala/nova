@@ -49,7 +49,7 @@ class PaperQAService:
         chunk_size: int = 5000,
         use_tier1_limits: bool = True,
         rate_limit: Optional[str] = None,
-        preset: Optional[str] = None,
+        preset: Optional[str] = "fast",
         index_name: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
