@@ -3,27 +3,25 @@
     import { Button } from "$lib/components/ui/button";
     import { Input } from "$lib/components/ui/input";
     import paperQAClient from "$lib/paperqa-client";
-    import { loadSettings, saveSettings } from "@/store";
-    import { onMount } from "svelte";
+    import { getUserSettings } from "@/store.svelte";
 
-    let paperDir = $state("");
+    const store = getUserSettings();
+
+    let paperDir = $derived(store.settings.paper_dir);
     let isLoading = $state(false);
     let error = $state("");
     let apiKeyConfigured = $state(false);
-    let settings = $state({});
 
-    onMount(async () => {
-        settings = await loadSettings();
+    $effect(() => {
         // if there is a paper directory configured,
         // we want to initialize Nova right away
-        if (settings.paper_dir) {
-            paperDir = settings.paper_dir;
-            await initializeNova();
+        if (paperDir) {
+            initializeNova();
         }
 
-        if (settings.api_key) {
-            await paperQAClient.updateSettings({ ...settings });
-            await checkApiKeyStatus();
+        if (store.settings.api_key) {
+            paperQAClient.updateSettings({ ...store.settings });
+            checkApiKeyStatus();
         }
     });
 
@@ -36,11 +34,7 @@
         }
     }
 
-    /**
-     * @param {{ preventDefault: () => void; }} event
-     */
-    async function selectDirectory(event) {
-        event.preventDefault();
+    async function selectDirectory() {
         try {
             const selected = await open({
                 directory: true,
@@ -49,8 +43,8 @@
             });
 
             if (selected && typeof selected === "string") {
-                paperDir = selected;
-                saveSettings({ paper_dir: selected });
+                store.settings.paper_dir = selected;
+                store.saveSettings();
             }
         } catch (err) {
             console.error("Error selecting directory:", err);
@@ -69,16 +63,16 @@
 
         try {
             const result = await paperQAClient.initialize(paperDir, {
-                preset: settings.preset,
-                llm: settings.llm,
-                summary_llm: settings.summary_llm,
-                agent_llm: settings.agent_llm,
-                embedding: settings.embedding,
-                temperature: settings.temperature,
-                evidence_k: settings.evidence_k,
-                max_sources: settings.max_sources,
-                chunk_size: settings.chunk_size,
-                use_tier1_limits: settings.use_tier1_limits,
+                preset: store.settings.preset,
+                llm: store.settings.llm,
+                summary_llm: store.settings.summary_llm,
+                agent_llm: store.settings.agent_llm,
+                embedding: store.settings.embedding,
+                temperature: store.settings.temperature,
+                evidence_k: store.settings.evidence_k,
+                max_sources: store.settings.max_sources,
+                chunk_size: store.settings.chunk_size,
+                use_tier1_limits: store.settings.use_tier1_limits,
             });
             if (result.status === "success") {
                 console.log("Nova initialized successfully");

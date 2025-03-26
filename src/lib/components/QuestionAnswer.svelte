@@ -9,8 +9,7 @@
     let isLoading = $state(false);
     let error = $state("");
 
-    async function askQuestion(event) {
-        event.preventDefault();
+    async function askQuestion() {
         if (!question.trim()) {
             error = "Please enter a question";
             return;

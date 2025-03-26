@@ -5,26 +5,12 @@
     import { Label } from "@/components/ui/label";
     import * as Select from "@/components/ui/select/index.js";
     import paperQAClient from "@/paperqa-client";
-    import { loadSettings, saveSettings } from "@/store";
+    import { getUserSettings } from "@/store.svelte";
 
-    const defaultSettings = {
-        llm: "gpt-4o-2024-11-20",
-        summary_llm: "gpt-4o-2024-11-20",
-        agent_llm: "gpt-4o-2024-11-20",
-        embedding: "text-embedding-3-small",
-        temperature: 0.0,
-        evidence_k: 10,
-        max_sources: 5,
-        chunk_size: 5000,
-        use_tier1_limits: true,
-        preset: "high_quality",
-        api_key: "",
-    };
-
-    let settings = $state({ ...defaultSettings });
+    const store = getUserSettings();
 
     /**
-     * @type {any[]}
+     * @type {string[]}
      */
     let presets = $state([]);
     let isLoading = $state(false);
@@ -33,11 +19,6 @@
     let showApiKey = $state(false);
 
     $effect(() => {
-        loadSettings().then((loadedSettings) => {
-            if (loadedSettings) {
-                settings = { ...defaultSettings, ...loadedSettings };
-            }
-        });
         loadPresets();
     });
 
@@ -52,20 +33,16 @@
         }
     }
 
-    /**
-     * @param {{ preventDefault: () => void; }} event
-     */
-    async function updateSettings(event) {
-        event.preventDefault();
+    async function updateSettings() {
         error = "";
         success = "";
         isLoading = true;
 
         try {
-            const result = await paperQAClient.updateSettings(settings);
+            const result = await paperQAClient.updateSettings(store.settings);
             if (result.status === "success") {
                 // Update settings in store
-                await saveSettings(settings);
+                store.saveSettings()
                 success = "Settings updated successfully";
                 // Refresh status after updating settings
                 if (
@@ -85,8 +62,7 @@
         }
     }
 
-    function toggleApiKeyVisibility(event) {
-        event.preventDefault();
+    function toggleApiKeyVisibility() {
         showApiKey = !showApiKey;
     }
 </script>
@@ -98,7 +74,7 @@
             <div class="flex gap-2">
                 <Input
                     type={showApiKey ? "text" : "password"}
-                    bind:value={settings.api_key}
+                    bind:value={store.settings.api_key}
                     placeholder="sk-..."
                 />
                 <Button
@@ -116,22 +92,22 @@
         </div>
         <div class="space-y-2">
             <Label>LLM Model</Label>
-            <Input type="text" bind:value={settings.llm} />
+            <Input type="text" bind:value={store.settings.llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Summary LLM</Label>
-            <Input type="text" bind:value={settings.summary_llm} />
+            <Input type="text" bind:value={store.settings.summary_llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Agent LLM</Label>
-            <Input type="text" bind:value={settings.agent_llm} />
+            <Input type="text" bind:value={store.settings.agent_llm} />
         </div>
 
         <div class="space-y-2">
             <Label>Embedding Model</Label>
-            <Input type="text" bind:value={settings.embedding} />
+            <Input type="text" bind:value={store.settings.embedding} />
         </div>
 
         <div class="space-y-2">
@@ -141,30 +117,30 @@
                 min="0"
                 max="1"
                 step="0.1"
-                bind:value={settings.temperature}
+                bind:value={store.settings.temperature}
             />
         </div>
 
         <div class="space-y-2">
             <Label>Evidence K</Label>
-            <Input type="number" min="1" bind:value={settings.evidence_k} />
+            <Input type="number" min="1" bind:value={store.settings.evidence_k} />
         </div>
 
         <div class="space-y-2">
             <Label>Max Sources</Label>
-            <Input type="number" min="1" bind:value={settings.max_sources} />
+            <Input type="number" min="1" bind:value={store.settings.max_sources} />
         </div>
 
         <div class="space-y-2">
             <Label>Chunk Size</Label>
-            <Input type="number" min="100" bind:value={settings.chunk_size} />
+            <Input type="number" min="100" bind:value={store.settings.chunk_size} />
         </div>
 
         <div class="space-y-2">
             <Label>Preset</Label>
-            <Select.Root type="single" bind:value={settings.preset}>
+            <Select.Root type="single" bind:value={store.settings.preset}>
                 <Select.Trigger class="w-full">
-                    {settings.preset || "Select a preset"}
+                    {store.settings.preset || "Select a preset"}
                 </Select.Trigger>
                 <Select.Content>
                     <Select.Item value="">None</Select.Item>
@@ -180,7 +156,7 @@
         <div class="space-y-2">
             <Label>Use Tier 1 Rate Limits</Label>
             <div>
-                <Checkbox bind:checked={settings.use_tier1_limits} />
+                <Checkbox bind:checked={store.settings.use_tier1_limits} />
             </div>
         </div>
     </div>

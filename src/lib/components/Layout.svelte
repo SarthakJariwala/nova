@@ -1,3 +1,9 @@
+<script>
+    import { setUserSettings } from "$lib/store.svelte";
+
+    setUserSettings();
+</script>
+
 <div class="flex h-screen bg-background">
     <aside class="w-64 bg-sidebar border-r border-sidebar-border">
         <div class="p-4">
