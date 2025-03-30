@@ -2,10 +2,10 @@ import { load } from "@tauri-apps/plugin-store";
 import { getContext, setContext } from "svelte";
 
 const defaultSettings = {
-  llm: "gpt-4o-2024-11-20",
-  summary_llm: "gpt-4o-2024-11-20",
-  agent_llm: "gpt-4o-2024-11-20",
-  embedding: "text-embedding-3-small",
+  llm: "gemini/gemini-2.0-flash",
+  summary_llm: "gemini/gemini-2.0-flash",
+  agent_llm: "gemini/gemini-2.0-flash",
+  embedding: "gemini/text-embedding-004",
   temperature: 0.0,
   evidence_k: 10,
   max_sources: 5,
