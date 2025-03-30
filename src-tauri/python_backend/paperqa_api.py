@@ -6,7 +6,7 @@ This module provides a simple class to interact with PaperQA in your projects.
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Literal
 
 from paperqa import Settings, ask
 from paperqa.settings import AgentSettings, AnswerSettings, IndexSettings
@@ -20,10 +20,10 @@ class PaperQA:
     def __init__(
         self,
         paper_dir: Path,
-        llm: str = "gpt-4o-2024-11-20",
-        summary_llm: str = "gpt-4o-2024-11-20",
-        agent_llm: str = "gpt-4o-2024-11-20",
-        embedding: str = "text-embedding-3-small",
+        llm: str = "gemini/gemini-2.0-flash",
+        summary_llm: str = "gemini/gemini-2.0-flash",
+        agent_llm: str = "gemini/gemini-2.0-flash",
+        embedding: str = "gemini/text-embedding-004",
         temperature: float = 0.0,
         verbosity: int = 0,
         evidence_k: int = 10,
@@ -34,6 +34,7 @@ class PaperQA:
         preset: Optional[str] = None,
         index_name: Optional[str] = None,
         api_key: Optional[str] = None,
+        provider_type: Literal["openai", "anthropic", "gemini"] = "gemini",
     ):
         """
         Initialize the PaperQA wrapper.
@@ -54,6 +55,7 @@ class PaperQA:
             preset: Use a preset configuration
             index_name: Custom name for the index
             api_key: API key for the LLM provider
+            provider_type: Type of provider (openai, anthropic, or gemini)
         """
         # Check if paper directory exists
         paper_dir = Path(paper_dir).expanduser()
@@ -75,12 +77,28 @@ class PaperQA:
         self.preset = preset
         self.index_name = index_name
         self.api_key = api_key
+        self.provider_type = provider_type
 
+        # Set the appropriate API key in environment
         if self.api_key:
-            os.environ["OPENAI_API_KEY"] = self.api_key
+            self._set_provider_api_key()
 
         # Create settings
         self._create_settings()
+
+    def _set_provider_api_key(self):
+        """Set the appropriate API key in environment based on provider type."""
+        if not self.api_key:
+            return
+
+        if self.provider_type == "openai":
+            os.environ["OPENAI_API_KEY"] = self.api_key
+        elif self.provider_type == "anthropic":
+            os.environ["ANTHROPIC_API_KEY"] = self.api_key
+        elif self.provider_type == "gemini":
+            os.environ["GEMINI_API_KEY"] = self.api_key
+        else:
+            raise ValueError(f"Unsupported provider type: {self.provider_type}")
 
     def _create_settings(self):
         """Create the settings object."""
@@ -197,8 +215,8 @@ class PaperQA:
             setattr(self, key, value)
 
         # Update API key in environment if it was changed
-        if "api_key" in kwargs and kwargs["api_key"]:
-            os.environ["OPENAI_API_KEY"] = kwargs["api_key"]
+        if "api_key" in kwargs or "provider_type" in kwargs:
+            self._set_provider_api_key()
 
         # Recreate settings with new values
         self._create_settings()
@@ -210,7 +228,17 @@ class PaperQA:
         Returns:
             True if API key is configured, False otherwise.
         """
-        return bool(self.api_key or os.environ.get("OPENAI_API_KEY"))
+        if self.api_key:
+            return True
+            
+        # Check environment variable based on provider
+        if self.provider_type == "openai":
+            return bool(os.environ.get("OPENAI_API_KEY"))
+        elif self.provider_type == "anthropic":
+            return bool(os.environ.get("ANTHROPIC_API_KEY"))
+        elif self.provider_type == "gemini":
+            return bool(os.environ.get("GEMINI_API_KEY"))
+        return False
 
     @staticmethod
     def get_preset_names() -> List[str]:

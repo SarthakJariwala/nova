@@ -11,7 +11,7 @@ import os
 import signal
 import sys
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Literal
 
 import zmq
 from paperqa_api import PaperQA
@@ -38,10 +38,10 @@ class PaperQAService:
     def initialize(
         self,
         paper_dir: str,
-        llm: str = "gpt-4o-2024-11-20",
-        summary_llm: str = "gpt-4o-2024-11-20",
-        agent_llm: str = "gpt-4o-2024-11-20",
-        embedding: str = "text-embedding-3-small",
+        llm: str = "gemini/gemini-2.0-flash",
+        summary_llm: str = "gemini/gemini-2.0-flash",
+        agent_llm: str = "gemini/gemini-2.0-flash",
+        embedding: str = "gemini/text-embedding-004",
         temperature: float = 0.0,
         verbosity: int = 0,
         evidence_k: int = 10,
@@ -51,6 +51,8 @@ class PaperQAService:
         rate_limit: Optional[str] = None,
         preset: Optional[str] = "fast",
         index_name: Optional[str] = None,
+        api_key: Optional[str] = None,
+        provider_type: Literal["openai", "anthropic", "gemini"] = "gemini",
     ) -> Dict[str, Any]:
         """
         Initialize the PaperQA instance with the given settings.
@@ -70,6 +72,8 @@ class PaperQAService:
             rate_limit: Custom rate limit string (e.g. '30000 per 1 minute')
             preset: Use a preset configuration
             index_name: Custom name for the index
+            api_key: API key for the specified provider (OpenAI, Anthropic, or Gemini)
+            provider_type: Type of provider (openai, anthropic, or gemini)
 
         Returns:
             Dict with status message
@@ -91,6 +95,8 @@ class PaperQAService:
                 rate_limit=rate_limit,
                 preset=preset,
                 index_name=index_name,
+                api_key=api_key,
+                provider_type=provider_type,
             )
             self.is_initialized = True
             logger.info(
@@ -181,7 +187,8 @@ class PaperQAService:
         api_key_configured = False
 
         if not self.is_initialized:
-            # Check if API key is in environment even if not initialized
+            # Check if any API key is in environment even if not initialized
+            # Default to checking OpenAI key for backward compatibility
             api_key_configured = bool(os.environ.get("OPENAI_API_KEY"))
             return {
                 "status": "not_initialized",
@@ -196,6 +203,7 @@ class PaperQAService:
             "llm": self.paperqa.llm,
             "embedding": self.paperqa.embedding,
             "preset": self.paperqa.preset or "none",
+            "provider_type": self.paperqa.provider_type,
             "api_key_configured": api_key_configured,
         }
 
