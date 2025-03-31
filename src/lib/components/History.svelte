@@ -31,7 +31,7 @@
 
 <div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Question History</h1>
+        <h1 class="text-2xl font-bold">History</h1>
         {#if historyStore.history.length > 0}
             <Button variant="destructive" onclick={clearAllHistory} class="flex">Clear All</Button>
         {/if}
@@ -48,14 +48,15 @@
                     <Card.Header class="flex-shrink-0">
                         <div class="flex justify-between items-start">
                             <Card.Title class="flex-grow">Q: {entry.question}</Card.Title>
-                            <div class="flex space-x-2">
+                            <div class="flex items-center space-x-2">
                                 <span class="text-xs text-muted-foreground">{formatDate(entry.timestamp)}</span>
-                                <button 
+                                <Button 
+                                    variant="ghost"
                                     class="text-destructive hover:text-destructive/80 text-xs"
                                     onclick={() => deleteEntry(index)}
                                 >
                                     Delete
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </Card.Header>
