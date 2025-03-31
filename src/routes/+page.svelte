@@ -58,7 +58,8 @@
             await paperQAClient.connect();
         } catch (error) {
             console.error("Error launching Python sidecar:", error);
-            errorMessage = `Error: ${error.message}`;
+            const errMessage = error instanceof Error ? error.message : String(error);
+            errorMessage = `Error: ${errMessage}`;
         }
     }
 </script>
@@ -78,7 +79,7 @@
                 'papers'
                     ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}"
-                on:click={() => (activeTab = "papers")}
+                onclick={() => (activeTab = "papers")}
             >
                 Papers
             </button>
@@ -88,7 +89,7 @@
                 'ask'
                     ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}"
-                on:click={() => (activeTab = "ask")}
+                onclick={() => (activeTab = "ask")}
             >
                 Ask Questions
             </button>
@@ -98,7 +99,7 @@
                 'settings'
                     ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                     : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}"
-                on:click={() => (activeTab = "settings")}
+                onclick={() => (activeTab = "settings")}
             >
                 Settings
             </button>
