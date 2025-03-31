@@ -55,3 +55,69 @@ export function setUserSettings() {
 export function getUserSettings() {
   return getContext(USER_SETTINGS_KEY);
 }
+
+const defaultHistory = [{}];
+
+export class HistoryStore {
+  history = $state(defaultHistory);
+  
+  constructor() {
+    this.initializeStore();
+  }
+  
+  async initializeStore() {
+    try {
+      this.store = await load("history.json", { autoSave: true });
+      const storedHistory = await this.store.get("qaHistory");
+      if (storedHistory) {
+        this.history = storedHistory;
+      }
+    } catch (error) {
+      console.error("Failed to initialize history store:", error);
+    }
+  }
+  
+  async addEntry(entry) {
+    // Add timestamp to entry
+    const entryWithTimestamp = {
+      ...entry,
+      timestamp: new Date().toISOString()
+    };
+    
+    // Add to the beginning of the array to show newest first
+    this.history = [entryWithTimestamp, ...this.history];
+    
+    // Save to persistent storage
+    await this.saveHistory();
+  }
+  
+  async deleteEntry(index) {
+    this.history = this.history.filter((_, i) => i !== index);
+    await this.saveHistory();
+  }
+  
+  async clearHistory() {
+    this.history = [];
+    await this.saveHistory();
+  }
+  
+  async saveHistory() {
+    try {
+      if (this.store) {
+        await this.store.set("qaHistory", this.history);
+      }
+    } catch (error) {
+      console.error("Failed to save history:", error);
+    }
+  }
+}
+
+const HISTORY_KEY = "qaHistory";
+
+export function setHistoryStore() {
+  return setContext(HISTORY_KEY, new HistoryStore());
+}
+
+export function getHistoryStore() {
+  return getContext(HISTORY_KEY);
+} 
