@@ -120,4 +120,23 @@ export function setHistoryStore() {
 
 export function getHistoryStore() {
   return getContext(HISTORY_KEY);
-} 
+}
+
+export class AnswerStore {
+  qa = $state({
+    question: "",
+    answer: "",
+    isLoading: false,
+    error: "",
+  });
+}
+
+const ANSWER_KEY = "qa";
+
+export function setAnswerStore() {
+  return setContext(ANSWER_KEY, new AnswerStore());
+}
+
+export function getAnswerStore() {
+  return getContext(ANSWER_KEY);
+}

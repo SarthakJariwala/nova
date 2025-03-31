@@ -8,13 +8,14 @@
     import { resolveResource } from "@tauri-apps/api/path";
     import { Command } from "@tauri-apps/plugin-shell";
     import paperQAClient from "$lib/paperqa-client";
-    import { setUserSettings, setHistoryStore } from "$lib/store.svelte";
+    import { setUserSettings, setHistoryStore, setAnswerStore } from "$lib/store.svelte";
 
     let activeTab = $state("papers");
 
     // Initialize stores
     setUserSettings();
     setHistoryStore();
+    setAnswerStore();
 
     let pythonCommand = null;
     let pythonChildProcess = null;
