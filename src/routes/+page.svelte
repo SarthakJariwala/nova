@@ -127,7 +127,7 @@
             <div class="space-y-6">
                 <h1 class="text-2xl font-bold">Paper Management</h1>
                 <p class="text-muted-foreground">
-                    Select a directory containing papers to analyze
+                    Select a folder containing papers to analyze
                 </p>
 
                 <PaperDirectorySelector />

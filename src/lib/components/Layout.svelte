@@ -3,7 +3,7 @@
         <div class="p-4">
             <h1 class="text-xl font-bold text-sidebar-foreground">Nova</h1>
             <p class="text-sm text-sidebar-foreground/70">
-                A PaperQA Interface
+                Discover new insights
             </p>
         </div>
 
